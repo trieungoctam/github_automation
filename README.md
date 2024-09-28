@@ -198,8 +198,9 @@ mvn test
 - gRPC Integration: You can extend this project by adding gRPC communication between the FastAPI and Spring Boot services for faster inter-service communication.
 - Database Support: Add database support (PostgreSQL, MySQL) to each service to store and manage persistent data.
 - Authentication: Add JWT-based authentication or OAuth2 to secure the services.
-License
-This project is licensed under the MIT License - see the LICENSE file for details.
+
+## License
+This project is licensed under the MIT License - see the [LICENSE](/License) file for details.
 
 ## Contributing
 
