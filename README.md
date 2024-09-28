@@ -26,12 +26,15 @@
 - MSV: B21DCCN142
 
 ## Overview
-This project demonstrates how to build a microservice architecture using FastAPI (Python) and Spring Boot (Java). The project consists of two independent services:
+This project demonstrates how to build a Livestream Service using Multicast for video broadcasting. The project includes two key components:
 
-- FastAPI Backend: A simple API service built using FastAPI.
-- Spring Boot Service: Another service built with Spring Boot.
+- Java Video Streaming Service: A video streaming service built using Java and Multicast to efficiently broadcast video streams to multiple clients within the same network.
 
-Both services are containerized using Docker, and they can be run together using Docker Compose. Each service can function independently but communicates via REST or can be extended to communicate using gRPC for higher efficiency.
+- FastAPI User Service: A user management and view history tracking service built using FastAPI (Python). This service manages user authentication, livestream view history, and provides a REST API for interacting with the user data.
+
+Both services are containerized using Docker and can be run together using Docker Compose. The Java Video Streaming Service broadcasts video streams using UDP Multicast, ensuring efficient delivery of video content to multiple clients within the same network. The FastAPI User Service handles user authentication, registration, and tracking user interactions with the streams.
+
+The services can be extended for broader use cases such as adding WebRTC for video communication or integrating with gRPC for high-performance communication between microservices.
 
 ## Project Structure
 ```bash
