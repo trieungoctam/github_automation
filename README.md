@@ -66,6 +66,7 @@ Both services are containerized using Docker, and they can be run together using
 │   └── README.md                      # Spring Boot documentation
 │
 ├── docs/                             # Documentation folder
+│   ├── basic_theory.md               # Basic theory behind address methods
 │   ├── architecture.md               # System architecture documentation
 │   ├── api_docs.md                   # API documentation for FastAPI and Spring Boot
 │   ├── grpc_docs.md                  # gRPC integration documentation
@@ -78,6 +79,7 @@ Both services are containerized using Docker, and they can be run together using
 ## Documentation
 Here are links to the detailed documentation for this project:
 
+- [Basic Theory](/docs/basic_theory.md): Basic theory and concepts behind address method (Unicast, Broadcast, Multicast, Anycast).
 - [Architecture Documentation](/docs/architechture.md): Learn more about the overall system architecture, communication patterns, and design decisions.
 - [API Documentation](docs/api_docs.md): Find detailed descriptions of the API endpoints, request/response formats, and usage examples for both FastAPI and Spring Boot services.
 - [gRPC Integration](docs/grpc_docs.md): Learn how to extend the system to use gRPC for faster and more efficient communication between services.
