@@ -1,4 +1,4 @@
-# Video Livestream Platform
+# Công cụ quản lý/automation GitHub Classroom với GitHub API
 
 ## Author
 1. Trieu Ngoc Tam
@@ -25,67 +25,81 @@
 
 - MSV: B21DCCN142
 
-## Overview
-This project demonstrates how to build a Livestream Service using Multicast for video broadcasting. The project includes two key components:
+## Mô tả dự án
 
-- Java Video Streaming Service: A video streaming service built using Java and Multicast to efficiently broadcast video streams to multiple clients within the same network.
+Công cụ này được thiết kế để tự động hóa quá trình quản lý lớp học trên GitHub Classroom, hỗ trợ giáo viên quản lý các bài tập lập trình của sinh viên một cách hiệu quả hơn. Công cụ sử dụng GitHub API để tự động tạo repository, theo dõi tiến độ sinh viên, gửi thông báo tự động và hỗ trợ chấm bài tự động.
 
-- FastAPI User Service: A user management and view history tracking service built using FastAPI (Python). This service manages user authentication, livestream view history, and provides a REST API for interacting with the user data.
+## Mục tiêu chính
+- **Tự động tạo bài tập**: Tạo các repository riêng cho từng sinh viên, sao chép template bài tập để sinh viên có thể bắt đầu làm bài.
+- **Theo dõi tiến độ sinh viên**: Theo dõi số lượng commit của sinh viên để biết được tiến độ hoàn thành bài tập.
+- **Gửi thông báo tự động**: Tạo issue nhắc nhở trên GitHub hoặc gửi email tự động khi sinh viên chưa nộp bài đúng hạn.
+- **Tự động chấm bài**: Sử dụng GitHub Actions để kiểm tra cú pháp code và unit test khi sinh viên push bài tập lên repository.
 
-Both services are containerized using Docker and can be run together using Docker Compose. The Java Video Streaming Service broadcasts video streams using UDP Multicast, ensuring efficient delivery of video content to multiple clients within the same network. The FastAPI User Service handles user authentication, registration, and tracking user interactions with the streams.
+## Các tính năng chính
 
-The services can be extended for broader use cases such as adding WebRTC for video communication or integrating with gRPC for high-performance communication between microservices.
+### 1. Tạo bài tập tự động
+- Công cụ sẽ tạo repository cho từng sinh viên trong tổ chức GitHub Classroom.
+- Sao chép một template bài tập có sẵn và push lên repository của sinh viên.
+
+### 2. Theo dõi tiến độ sinh viên
+- Công cụ lấy danh sách tất cả các repository trong lớp học và kiểm tra số lượng commit của sinh viên.
+- Hiển thị thông tin về tiến độ của sinh viên, giúp giáo viên theo dõi quá trình nộp bài dễ dàng.
+
+### 3. Gửi thông báo tự động
+- Nếu sinh viên chưa nộp bài đúng hạn, công cụ sẽ tạo một issue trên GitHub hoặc gửi email nhắc nhở.
+- Tích hợp SMTP để gửi email tự động thông báo sinh viên hoàn thành bài tập đúng hạn.
+
+### 4. Tự động chấm bài
+- Sử dụng GitHub Actions để tự động kiểm tra mã nguồn của sinh viên khi họ push bài tập lên.
+- Chạy các kiểm tra cú pháp và unit test để đảm bảo chất lượng code.
+- Gửi phản hồi tự động cho sinh viên qua GitHub Issues nếu bài tập đạt yêu cầu hoặc có lỗi cần sửa.
+
+## Hướng dẫn cài đặt
+
+### Yêu cầu hệ thống
+- Python 3.x hoặc Node.js
+- GitHub API Personal Access Token (PAT)
+- Một tổ chức GitHub để quản lý GitHub Classroom
 
 ## Project Structure
 ```bash
-
-/fastapi-springboot-project
+github-classroom-automation/
 │
-├── fastapi-backend/                  # FastAPI microservice
-│   ├── app/
-│   │   ├── api/
-│   │   │   ├── v1/
-│   │   │   │   ├── routes.py         # FastAPI routes
-│   │   ├── core/
-│   │   │   ├── config.py             # Configurations
-│   │   ├── db/
-│   │   │   ├── models.py             # Database models
-│   │   ├── main.py                   # Entry point for FastAPI
-│   ├── Dockerfile                    # Docker configuration for FastAPI
-│   ├── requirements.txt              # Python dependencies
-│   └── README.md                     # FastAPI documentation
+├── src/
+│   ├── api/
+│   │   ├── github_client.py       # Xử lý kết nối với GitHub API
+│   │   └── notifications.py       # Xử lý việc gửi email hoặc tạo GitHub Issues
+│   │
+│   ├── core/
+│   │   ├── create_assignment.py   # Logic tạo bài tập tự động
+│   │   ├── track_progress.py      # Theo dõi tiến độ sinh viên (commits, PRs)
+│   │   └── auto_grading.py        # Xử lý tự động chấm bài
+│   │
+│   ├── utils/
+│   │   ├── config.py              # Lưu trữ cấu hình dự án (API keys, email server)
+│   │   └── logger.py              # Xử lý logging và thông báo lỗi
+│   │
+│   └── app.py                     # Tệp chính để chạy dự án, tích hợp các tính năng
 │
-├── springboot-service/               # Spring Boot microservice
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/
-│   │   │   │   ├── com/
-│   │   │   │   │   ├── example/
-│   │   │   │   │   │   ├── SpringbootServiceApplication.java # Main Spring Boot file
-│   │   │   │   │   │   ├── controller/
-│   │   │   │   │   │   │   ├── ApiController.java            # API routes
-│   ├── pom.xml                        # Maven dependencies
-│   ├── Dockerfile                     # Docker configuration for Spring Boot
-│   └── README.md                      # Spring Boot documentation
+├── tests/
+│   ├── test_create_assignment.py   # Kiểm tra chức năng tạo bài tập
+│   ├── test_track_progress.py      # Kiểm tra chức năng theo dõi tiến độ sinh viên
+│   └── test_auto_grading.py        # Kiểm tra chức năng tự động chấm bài
 │
-├── docs/                             # Documentation folder
-│   ├── basic_theory.md               # Basic theory behind address methods
-│   ├── architecture.md               # System architecture documentation
-│   ├── api_docs.md                   # API documentation for FastAPI and Spring Boot
-│   ├── grpc_docs.md                  # gRPC integration documentation
-│   ├── deployment.md                 # Deployment strategies and options
-│   └── troubleshooting.md            # Troubleshooting and common issues
+├── .github/
+│   └── workflows/
+│       └── main.yml                # Cấu hình GitHub Actions cho CI/CD
 │
-├── docker-compose.yml                 # Docker Compose to run both services
-└── README.md                          # Project-level documentation
+├── .gitignore                      # Các tệp cần loại bỏ khi commit lên Git
+├── README.md                       # Tài liệu mô tả dự án
+├── requirements.txt                # Danh sách các thư viện cần thiết (Python)
+├── package.json                    # Thông tin dự án (nếu sử dụng Node.js)
+└── LICENSE                         # Thông tin bản quyền dự án
 ```
 ## Documentation
 Here are links to the detailed documentation for this project:
-
-- [Basic Theory](/docs/basic_theory.md): Basic theory and concepts behind address method (Unicast, Broadcast, Multicast, Anycast).
 - [Architecture Documentation](/docs/architechture.md): Learn more about the overall system architecture, communication patterns, and design decisions.
 - [API Documentation](docs/api_docs.md): Find detailed descriptions of the API endpoints, request/response formats, and usage examples for both FastAPI and Spring Boot services.
-- [gRPC Integration](docs/grpc_docs.md): Learn how to extend the system to use gRPC for faster and more efficient communication between services.
 - [Deployment Strategies](docs/deployment.md): Review strategies for deploying this project in different environments (local, cloud, Kubernetes).
 - [Troubleshooting Guide](docs/troubleshooting.md): Common issues and their solutions for both services.
 
@@ -95,109 +109,15 @@ Here are links to the detailed documentation for this project:
 
 - **Python 3.9+** for FastAPI development (optional if using Docker).
 
-- **Java 11+** for Spring Boot development (optional if using Docker).
-
-## Installation and Running the Project
-1. Clone the repository
-```bash
-git clone https://github.com/your-repo/fastapi-springboot-project.git
-cd fastapi-springboot-project
-```
-2. Run both services with Docker Compose
-- The project includes a docker-compose.yml file that helps you easily run both services.
-
-```bash
-docker-compose up --build
-```
-3. Access the services
-- FastAPI Backend: The FastAPI service will be accessible at http://localhost:8000. You can use endpoints like /users:
-
-```bash
-http://localhost:8000/users
-```
-- Spring Boot Service: The Spring Boot service will be accessible at http://localhost:8080. For example, you can use the /api/users endpoint:
-
-```bash
-http://localhost:8080/api/users
-```
-4. Stopping the services
-- To stop the services, use the following command:
-
-```bash
-docker-compose down
-```
-
-## FastAPI Service Details
-FastAPI is a modern web framework for building APIs with Python. It is designed for high-performance applications and is extremely easy to use.
-
-### API Endpoints
-- GET /users: Returns a list of users.
-### Running FastAPI without Docker
-If you want to run the FastAPI service without Docker, follow these steps:
-
-1. Navigate to the fastapi-backend/ directory.
-2. Install the dependencies:
-```bash
-pip install -r requirements.txt
-```
-3. Run the FastAPI server:
-```bash
-uvicorn app.main:app --reload
-```
-## Spring Boot Service Details
-Spring Boot is a widely-used Java framework for building web services and microservices with robust configuration and high scalability.
-
-### API Endpoints
-- GET /api/users: Returns a list of users from Spring Boot.
-### Running Spring Boot without Docker
-If you want to run the Spring Boot service without Docker, follow these steps:
-
-1. Navigate to the springboot-service/ directory.
-2. Build the project using Maven:
-```bash
-mvn clean install
-```
-3. Run the Spring Boot server:
-```bash
-mvn spring-boot:run
-```
-## Docker Compose Configuration
-In the docker-compose.yml, both services are connected in a single network to ensure they can communicate with each other.
-
-```yaml
-version: '3'
-services:
-  fastapi-backend:
-    build: ./fastapi-backend
-    ports:
-      - "8000:8000"
-    networks:
-      - app-network
-
-  springboot-service:
-    build: ./springboot-service
-    ports:
-      - "8080:8080"
-    networks:
-      - app-network
-
-networks:
-  app-network:
-    driver: bridge
-```
-## Testing
-FastAPI: You can run unit tests using pytest for FastAPI:
-```bash
-pytest
-```
-Spring Boot: You can run unit tests using JUnit in Spring Boot:
-```bash
-mvn test
-```
-## Extending the Project
-- gRPC Integration: You can extend this project by adding gRPC communication between the FastAPI and Spring Boot services for faster inter-service communication.
-- Database Support: Add database support (PostgreSQL, MySQL) to each service to store and manage persistent data.
-- Authentication: Add JWT-based authentication or OAuth2 to secure the services.
+## Sử dụng
+### Tạo bài tập lập trình
+- Công cụ sẽ tự động tạo repository cho từng sinh viên trong lớp học và push template bài tập lên.
+### Theo dõi tiến độ sinh viên
+- Theo dõi số lượng commit trên mỗi repository để cập nhật tiến độ hoàn thành bài tập.
+### Gửi thông báo tự động
+- Tạo GitHub Issues hoặc gửi email nhắc nhở sinh viên hoàn thành bài tập.
+### Tự động chấm bài
+- Sử dụng GitHub Actions để tự động kiểm tra bài tập khi sinh viên push code lên repository.
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](/License) file for details.
