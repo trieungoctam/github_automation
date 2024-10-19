@@ -38,3 +38,8 @@ out/
 
 ### Pycharm ###
 __pycache__/
+
+### ENV ###
+github/
+
+.env

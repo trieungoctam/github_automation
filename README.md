@@ -133,3 +133,6 @@ This project is licensed under the MIT License - see the [LICENSE](/License) fil
 - Push to the branch (git push origin feature/my-feature).
 
 - Create a new Pull Request.
+
+## Support
+https://chatgpt.com/share/670ead55-cf58-800d-869f-7e89fadd38f8
