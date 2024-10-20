@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  test:
+  test-and-grade:
     runs-on: ubuntu-latest
 
     steps:
@@ -16,12 +16,56 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: '3.x'
+        python-version: '3.9'
 
     - name: Install dependencies
       run: |
+        python -m pip install --upgrade pip
         pip install -r requirements.txt
 
     - name: Run unit tests
       run: |
         pytest
+
+    - name: Run auto-grading
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        python -c "
+        from src.core.auto_grading import auto_grade
+        from src.client.github_client import GitHubClient
+        import os
+
+        github_client = GitHubClient(os.getenv('GITHUB_TOKEN'))
+        repo_name = os.getenv('GITHUB_REPOSITORY')
+        
+        files_to_grade = [
+          {'path': 'src/assignments/assignment1.py', 'function': 'solve_assignment1'},
+          {'path': 'src/assignments/assignment2.py', 'function': 'solve_assignment2'},
+        ]
+        
+        for file in files_to_grade:
+          result = auto_grade(github_client, repo_name, file['path'], file['function'])
+          print(f'Grading {file["path"]}:')
+          print(f'Passed: {result["passed"]}')
+          print(f'Feedback: {result["feedback"]}')
+          print('---')
+        "
+
+    - name: Create feedback issue
+      if: failure()
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        python -c "
+        from github import Github
+        import os
+
+        g = Github(os.getenv('GITHUB_TOKEN'))
+        repo = g.get_repo(os.getenv('GITHUB_REPOSITORY'))
+        
+        issue_title = 'Auto-grading feedback'
+        issue_body = 'Your recent push failed the auto-grading process. Please check the workflow logs for more details.'
+        
+        repo.create_issue(title=issue_title, body=issue_body)
+        "
