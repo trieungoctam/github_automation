@@ -1,0 +1,1 @@
+/home/dynamite/Project/github_automation/venv/bin/python3.10 /home/dynamite/Project/github_automation/tests/test.py
